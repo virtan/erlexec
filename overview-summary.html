@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Exec - OS Process Manager for Erlang VM.
 </title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
@@ -10,9 +10,13 @@
 <div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
 <h1>Exec - OS Process Manager for Erlang VM.
 </h1>
-<p><b>Version:</b> 9d14a258be80a7fff49b3970b9874853bda47329</p>
+<p><b>Version:</b> f894713839b5f4c4a094f7990d9c8fc32d1f5191</p>
 <p><b>Authors:</b> Serge Aleynikov (<a href="mailto:saleyn at gmail dot com"><tt>saleyn at gmail dot com</tt></a>).</p>
 <p>This application implements a manager of OS processes.</p>
+
+<p>It's designed to address the shortcomings of Erlang's
+<code>os:cmd/1</code> and <code>erlang:open_port/2</code> that allow to execute external
+OS processes.</p>
 
 <h3><a name="Contents">Contents</a></h3>
 <ol>
@@ -27,32 +31,36 @@
 
 <h3><a name="Download">Download</a></h3>
 
-    <p>Project's repository:
-        <a href="https://github.com/saleyn/erlexec" target="_top"><tt>https://github.com/saleyn/erlexec</tt></a></p>
-
-    <p>Git clone command:
-        <code>git clone https://github.com/saleyn/erlexec.git</code></p>
+<ul>
+<li>Project's repository: <a href="https://github.com/saleyn/erlexec" target="_top"><tt>https://github.com/saleyn/erlexec</tt></a></li>
+<li>Git clone command: <code>git clone https://github.com/saleyn/erlexec.git</code></li>
+</ul>
 
 <h3><a name="Features">Features</a></h3>
 
 <ol>
 <li>Starting, stopping OS commands and getting their OS process IDs.</li>
-<li>Providing versatile OS command options, including working directory,
-    environment settings, alternative termination command, effective
-    user, process priority options, custom redirection of their
-    stdin/stdout/stderr streams.</li>
+<li>Setting OS command working directory, environment, effective user,
+    process priority.</li>
+<li>Providing custom termination command for killing a process or relying
+    on default SIGTERM/SIGKILL behavior.  Specifying custom timeout
+    for SIGKILL after the termination command or SIGTERM was executed.</li>
+<li>Terminating all processing beloging to a process group</li>
 <li>Ability to link Erlang processes to OS processes (via intermediate
     Erlang Pids that are linked to an associated OS process).</li>
+<li>Ability to monitor the termination of OS processes.</li>
+<li>Ability to execute OS processes synchronously and asynchronously.</li>
 <li>Proper cleanup of OS processes at port program termination time.</li>
 <li>Communicating with an OS process via its STDIN.</li> 
 <li>Redirecting STDOUT and STDERR of an OS process to a file, erlang process,
   or a custom function. When redirected to a file, the file can be
   open in append/truncate mode, and given creation access mask.</li>
+<li>Running interactive processes with psudo-terminal pty support.</li>
 </ol>
 
 <h3><a name="Supported_Platforms">Supported Platforms</a></h3>
 
-<p>Currently the project supports Linux and Solaris operating systems.</p>
+<p>Linux, Solaris, and MacOS X.</p>
 
 <h3><a name="Architecture">Architecture</a></h3>
 <pre>  *-------------------------*
@@ -97,16 +105,24 @@ ok                                                      % Note that this could a
 
 Note that killing a process can be accomplished by running kill(3) command
 in an external shell, or by executing exec:kill/2.
-<pre>4&gt; f(I), {ok, _, I} = exec:run_link("sleep 1000", []).
+<pre>1&gt; f(I), {ok, _, I} = exec:run_link("sleep 1000", []).
 {ok,&lt;0.37.0&gt;,2350}
-5&gt; exec:kill(I, 15).
+2&gt; exec:kill(I, 15).
 ok
 ** exception error: {exit_status,15}                    % Our shell died because we linked to the
                                                         % killed shell process via exec:run_link/2.
 
-6&gt; exec:status(15).                                     % Examine the exit status.
+3&gt; exec:status(15).                                     % Examine the exit status.
 {signal,15,false}                                       % The program got SIGTERM signal and produced
                                                         % no core file.</pre>
+
+<h4><a name="Using_a_custom_success_return_code">Using a custom success return code</a></h4>
+<pre>1&gt; exec:start_link([]).
+{ok,&lt;0.35.0&gt;}
+2&gt; exec:run_link("sleep 1", [{success_exit_code, 0}, sync]).
+{ok,[]}
+3&gt; exec:run("sleep 1", [{success_exit_code, 1}, sync]).
+{error,[{exit_status,1}]}                               % Note that the command returns exit code 1</pre>
 
 <h4><a name="Redirecting_OS_process_stdout_to_a_file">Redirecting OS process stdout to a file</a></h4>
 <pre>7&gt; f(I), {ok, _, I} = exec:run_link("for i in 1 2 3; do echo \"Test$i\"; done",
@@ -130,6 +146,7 @@ Got stdout from 29652: &lt;&lt;"Iter1\n"&gt;&gt;
 Got stdout from 29652: &lt;&lt;"Iter2\n"&gt;&gt;
 Got stdout from 29652: &lt;&lt;"Iter3\n"&gt;&gt;
 
+% Note that stdout/stderr options are equivanet to {stdout, self()}, {stderr, self()} 
 11&gt; exec:run("echo Hello World!; echo ERR!! 1&gt;&amp;2", [stdout, stderr]).
 {ok,&lt;0.244.0&gt;,18382}
 12&gt; flush().
@@ -192,10 +209,10 @@ ok
 <pre>% Execute an OS process (script) that reads STDIN and echoes it back to Erlang
 25&gt; f(I), {ok, _, I} = exec:run("read x; echo \"Got: $x\"", [stdin, stdout, monitor]).
 {ok,&lt;0.427.0&gt;,26431}
-% Send the OS process some data via its `stdin'
+% Send the OS process some data via its stdin
 26&gt; exec:send(I, &lt;&lt;"Test data\n"&gt;&gt;).                                                  
 ok
-% Get the response written to processes `stdout'
+% Get the response written to processes stdout
 27&gt; f(M), receive M -&gt; M after 10000 -&gt; timeout end.
 {stdout,26431,&lt;&lt;"Got: Test data\n"&gt;&gt;}
 % Confirm that the process exited
@@ -204,11 +221,59 @@ ok
 
 <h4><a name="Running_OS_commands_synchronously">Running OS commands synchronously</a></h4>
 <pre>% Execute an shell script that blocks for 1 second and return its termination code
-29&gt; exec:run("sleep 1", [sync]).                                                       
-{ok,0}</pre>
+29&gt; exec:run("sleep 1; echo Test", [sync]).
+% By default all I/O is redirected to /dev/null, so no output is captured
+{ok,[]}
 
+% 'stdout' option instructs the port program to capture stdout and return it to caller
+30&gt; exec:run("sleep 1; echo Test", [stdout, sync]).
+{ok,[{stdout, [&lt;&lt;"Test\n"&gt;&gt;]}]}
+
+% Execute a non-existing command
+31&gt; exec:run("echo1 Test", [sync, stdout, stderr]).   
+{error,[{exit_status,32512},
+        {stderr,[&lt;&lt;"/bin/bash: echo1: command not found\n"&gt;&gt;]}]}
+
+% Capture stdout/stderr of the executed command
+32&gt; exec:run("echo Test; echo Err 1&gt;&amp;2", [sync, stdout, stderr]).    
+{ok,[{stdout,[&lt;&lt;"Test\n"&gt;&gt;]},{stderr,[&lt;&lt;"Err\n"&gt;&gt;]}]}
+
+% Redirect stderr to stdout
+33&gt; exec:run("echo Test 1&gt;&amp;2", [{stderr, stdout}, stdout, sync]).
+{ok, [{stdout, [&lt;&lt;"Test\n"&gt;&gt;]}]}</pre>
+
+<h4><a name="Running_OS_commands_with/without_shell">Running OS commands with/without shell</a></h4>
+<pre>% Execute a command by an OS shell interpreter
+34&gt; exec:run("/bin/echo ok", [sync, stdout]).
+{ok, [{stdout, [&lt;&lt;"ok\n"&gt;&gt;]}]}
+
+% Execute an executable without a shell
+35&gt; exec:run(["/bin/echo", "ok"], [sync, stdout])).
+{ok, [{stdout, [&lt;&lt;"ok\n"&gt;&gt;]}]}
+
+% Execute a shell with custom options
+36&gt; exec:run(["/bin/bash", "-c", "echo ok"], [sync, stdout])).
+{ok, [{stdout, [&lt;&lt;"ok\n"&gt;&gt;]}]}</pre>
+
+<h4><a name="Running_OS_commands_with_pseudo_terminal_(pty)">Running OS commands with pseudo terminal (pty)</a></h4>
+<pre>% Execute a command without a pty
+37&gt; exec:run("echo hello", [sync, stdout]).
+{ok, [{stdout,[&lt;&lt;"hello\n"&gt;&gt;]}]}
+
+% Execute a command with a pty
+38&gt; exec:run("echo hello", [sync, stdout, pty]).
+{ok,[{stdout,[&lt;&lt;"hello"&gt;&gt;,&lt;&lt;"\r\n"&gt;&gt;]}]}</pre>
+ 
+<h4><a name="Kill_a_process_group_at_process_exit">Kill a process group at process exit</a></h4>
+<pre>% In the following scenario the process P0 will create a new process group
+% equal to the OS pid of that process (value = GID). The next two commands
+% are assigned to the same process group GID. As soon as the P0 process exits
+% P1 and P2 will also get terminated by signal 15 (SIGTERM):
+39&gt; {ok, P0, GID} = exec:run("sleep 1",  [{group, 0},   kill_group]).
+40&gt; {ok, P1,   _} = exec:run("sleep 15", [{group, GID}, monitor]).
+41&gt; {ok, P2,   _} = exec:run("sleep 15", [{group, GID}, monitor]).</pre>
 <hr>
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Aug 12 2013, 10:13:49.</i></p>
+<p><i>Generated by EDoc, Apr 27 2015, 19:29:24.</i></p>
 </body>
 </html>

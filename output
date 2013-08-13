@@ -1,0 +1,630 @@
+INFO:  Detected support of linux capabilities.
+==> erlexec (eunit)
+Selecting maxfd=3 (sleep={5s,0us})
+Select got 1 events (maxfd=3)
+Parsed cmd 'echo ok' options
+  (stdin=null, stdout=null, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> null]
+  Redirecting [stderr -> null]
+Starting child: 'echo ok'
+  child  = (stdin=null(fd:5), stdout=null(fd:5), stderr=null(fd:5))
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo ok
+Spawned child pid 11446
+Selecting maxfd=3 (sleep={5s,0us})
+Process 11446 exited (ret=11446, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 1 running children (exited count=1)
+Checking 1 exited children (wakeup=5.000)
+Selecting maxfd=3 (sleep={5s,0us})
+Select got 1 events (maxfd=3)
+Parsed cmd 'echo Test; echo ERR 1>&2' options
+  (stdin=null, stdout=erlang, stderr=erlang)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=7}]
+  Redirecting [stderr -> pipe:{r=8,w=9}]
+Starting child: 'echo Test; echo ERR 1>&2'
+  child  = (stdin=null(fd:5), stdout=fd:7, stderr=fd:9)
+  parent = (stdin=none, stdout=fd:6, stderr=fd:8)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test; echo ERR 1>&2
+Spawned child pid 11447
+  Parent closing pid 11447 pipe writing end (fd=7)
+  Setup reading end of pid 11447 stdout redirection (fd=6 [non-block])
+  Parent closing pid 11447 pipe writing end (fd=9)
+  Setup reading end of pid 11447 stderr redirection (fd=8 [non-block])
+Pid 11447 adding stdout checking (fd=6)
+Pid 11447 adding stdout checking (fd=8)
+Selecting maxfd=8 (sleep={5s,0us})
+Select got 2 events (maxfd=8)
+Process 11447 exited (ret=11447, status=0, sig=17, oktojump=0, exited_children=0, exited=T, signaled=F)
+Child process 11447 exited (status=0)
+Read 5 bytes from pid 11447's stdout (fd=6): ok
+Read 4 bytes from pid 11447's stderr (fd=8): ok
+Read 0 bytes from pid 11447's stdout (fd=6): No such process
+Eof reading pid 11447's stdout, closing fd=6: No such process
+Read 0 bytes from pid 11447's stderr (fd=8): No such process
+Eof reading pid 11447's stderr, closing fd=8: No such process
+Process 11447 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Checking 1 running children (exited count=1)
+Checking 1 exited children (wakeup=5.000)
+Selecting maxfd=3 (sleep={5s,0us})
+Select got 1 events (maxfd=3)
+Parsed cmd 'read x; echo "Got: $x"' options
+  (stdin=erlang, stdout=erlang, stderr=null)
+  Redirecting [stdin -> pipe:{r=6,w=7}]
+  Redirecting [stdout -> pipe:{r=8,w=9}]
+  Redirecting [stderr -> null]
+Starting child: 'read x; echo "Got: $x"'
+  child  = (stdin=fd:6, stdout=fd:9, stderr=null(fd:5))
+  parent = (stdin=fd:7, stdout=fd:8, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: read x; echo "Got: $x"
+Spawned child pid 11448
+  Parent closing pid 11448 pipe reading end (fd=6)
+  Setup writing end of pid 11448 stdin redirection (fd=7 [non-block])
+  Parent closing pid 11448 pipe writing end (fd=9)
+  Setup reading end of pid 11448 stdout redirection (fd=8 [non-block])
+Pid 11448 adding stdout checking (fd=8)
+Selecting maxfd=8 (sleep={5s,0us})
+Select got 1 events (maxfd=8)
+Wrote 10/10 bytes to stdin (fd=7) of pid 11448
+Pid 11448 adding stdout checking (fd=8)
+Selecting maxfd=8 (sleep={5s,0us})
+Select got 1 events (maxfd=8)
+Read 15 bytes from pid 11448's stdout (fd=8): ok
+Process 11448 exited (ret=11448, status=0, sig=17, oktojump=0, exited_children=0, exited=T, signaled=F)
+Child process 11448 exited (status=0)
+Checking 1 running children (exited count=1)
+Checking 1 exited children (wakeup=5.000)
+Read 0 bytes from pid 11448's stdout (fd=8): No such process
+Eof reading pid 11448's stdout, closing fd=8: No such process
+Process 11448 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Closing pid 11448's stdin
+Selecting maxfd=3 (sleep={5s,0us})
+Select got 1 events (maxfd=3)
+Parsed cmd 'for i in 1 2; do echo TEST$i; sleep 0.05; done' options
+  (stdin=null, stdout=erlang, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=7}]
+  Redirecting [stderr -> null]
+Starting child: 'for i in 1 2; do echo TEST$i; sleep 0.05; done'
+  child  = (stdin=null(fd:5), stdout=fd:7, stderr=null(fd:5))
+  parent = (stdin=none, stdout=fd:6, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: for i in 1 2; do echo TEST$i; sleep 0.05; done
+Spawned child pid 11449
+  Parent closing pid 11449 pipe writing end (fd=7)
+  Setup reading end of pid 11449 stdout redirection (fd=6 [non-block])
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Select got 1 events (maxfd=6)
+Read 6 bytes from pid 11449's stdout (fd=6): ok
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Select got 1 events (maxfd=6)
+Read 6 bytes from pid 11449's stdout (fd=6): ok
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Select got 1 events (maxfd=6)
+Parsed cmd 'echo Test' options
+  (stdin=null, stdout=file, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> {file:/tmp/exec_temp_1379_524410_466454, fd:7}]
+  Redirecting [stderr -> null]
+Starting child: 'echo Test'
+  child  = (stdin=null(fd:5), stdout=fd:7, stderr=null(fd:5))
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test
+Spawned child pid 11452
+  Parent closing pid 11452 pipe writing end (fd=7)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Process 11452 exited (ret=11452, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={0s,0us})
+Select got 0 events (maxfd=6)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Select got 1 events (maxfd=6)
+Parsed cmd 'echo Test' options
+  (stdin=null, stdout=file, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> {file:/tmp/exec_temp_1379_524410_466454, fd:7}]
+  Redirecting [stderr -> null]
+Starting child: 'echo Test'
+  child  = (stdin=null(fd:5), stdout=fd:7, stderr=null(fd:5))
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test
+Spawned child pid 11453
+  Parent closing pid 11453 pipe writing end (fd=7)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Process 11453 exited (ret=11453, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={0s,0us})
+Select got 0 events (maxfd=6)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Select got 1 events (maxfd=6)
+Parsed cmd 'echo Test2' options
+  (stdin=null, stdout=file, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> {file:/tmp/exec_temp_1379_524410_466454, fd:7}]
+  Redirecting [stderr -> null]
+Starting child: 'echo Test2'
+  child  = (stdin=null(fd:5), stdout=fd:7, stderr=null(fd:5))
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test2
+Spawned child pid 11454
+  Parent closing pid 11454 pipe writing end (fd=7)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Process 11454 exited (ret=11454, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={0s,0us})
+Select got 0 events (maxfd=6)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11449 adding stdout checking (fd=6)
+Selecting maxfd=6 (sleep={5s,0us})
+Select got 1 events (maxfd=6)
+Parsed cmd 'for i in 1 2; do echo TEST$i; sleep 0.05; done 1>&2' options
+  (stdin=null, stdout=null, stderr=erlang)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> null]
+  Redirecting [stderr -> pipe:{r=7,w=8}]
+Starting child: 'for i in 1 2; do echo TEST$i; sleep 0.05; done 1>&2'
+  child  = (stdin=null(fd:5), stdout=null(fd:5), stderr=fd:8)
+  parent = (stdin=none, stdout=none, stderr=fd:7)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: for i in 1 2; do echo TEST$i; sleep 0.05; done 1>&2
+Spawned child pid 11455
+  Parent closing pid 11455 pipe writing end (fd=8)
+  Setup reading end of pid 11455 stderr redirection (fd=7 [non-block])
+Pid 11449 adding stdout checking (fd=6)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 6 bytes from pid 11455's stderr (fd=7): ok
+Pid 11449 adding stdout checking (fd=6)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11449 exited (ret=11449, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Read 0 bytes from pid 11449's stdout (fd=6): No such process
+Eof reading pid 11449's stdout, closing fd=6: No such process
+Process 11449 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 6 bytes from pid 11455's stderr (fd=7): ok
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'echo Test 1>&2' options
+  (stdin=null, stdout=null, stderr=file)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> null]
+  Redirecting [stderr -> {file:/tmp/exec_temp_1379_524410_530379, fd:6}]
+Starting child: 'echo Test 1>&2'
+  child  = (stdin=null(fd:5), stdout=null(fd:5), stderr=fd:6)
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test 1>&2
+Spawned child pid 11458
+  Parent closing pid 11458 pipe writing end (fd=6)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11458 exited (ret=11458, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'echo Test 1>&2' options
+  (stdin=null, stdout=null, stderr=file)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> null]
+  Redirecting [stderr -> {file:/tmp/exec_temp_1379_524410_530379, fd:6}]
+Starting child: 'echo Test 1>&2'
+  child  = (stdin=null(fd:5), stdout=null(fd:5), stderr=fd:6)
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test 1>&2
+Spawned child pid 11459
+  Parent closing pid 11459 pipe writing end (fd=6)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11459 exited (ret=11459, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'echo Test2 1>&2' options
+  (stdin=null, stdout=null, stderr=file)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> null]
+  Redirecting [stderr -> {file:/tmp/exec_temp_1379_524410_530379, fd:6}]
+Starting child: 'echo Test2 1>&2'
+  child  = (stdin=null(fd:5), stdout=null(fd:5), stderr=fd:6)
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo Test2 1>&2
+Spawned child pid 11460
+  Parent closing pid 11460 pipe writing end (fd=6)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11460 exited (ret=11460, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd '/bin/echo ok' options
+  (stdin=null, stdout=erlang, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=8}]
+  Redirecting [stderr -> null]
+Starting child: '/bin/echo ok'
+  child  = (stdin=null(fd:5), stdout=fd:8, stderr=null(fd:5))
+  parent = (stdin=none, stdout=fd:6, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: /bin/echo ok
+Spawned child pid 11461
+  Parent closing pid 11461 pipe writing end (fd=8)
+  Setup reading end of pid 11461 stdout redirection (fd=6 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11461 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Process 11461 exited (ret=11461, status=0, sig=17, oktojump=0, exited_children=0, exited=T, signaled=F)
+Child process 11461 exited (status=0)
+Read 3 bytes from pid 11461's stdout (fd=6): ok
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Read 0 bytes from pid 11461's stdout (fd=6): No such process
+Eof reading pid 11461's stdout, closing fd=6: No such process
+Process 11461 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd '/bin/bash' options
+  (stdin=null, stdout=erlang, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=8}]
+  Redirecting [stderr -> null]
+Starting child: '/bin/bash'
+  child  = (stdin=null(fd:5), stdout=fd:8, stderr=null(fd:5))
+  parent = (stdin=none, stdout=fd:6, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo ok
+Spawned child pid 11462
+  Parent closing pid 11462 pipe writing end (fd=8)
+  Setup reading end of pid 11462 stdout redirection (fd=6 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11462 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 3 bytes from pid 11462's stdout (fd=6): ok
+Process 11462 exited (ret=11462, status=0, sig=17, oktojump=0, exited_children=0, exited=T, signaled=F)
+Child process 11462 exited (status=0)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Read 0 bytes from pid 11462's stdout (fd=6): No such process
+Eof reading pid 11462's stdout, closing fd=6: No such process
+Process 11462 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd '/bin/echo' options
+  (stdin=null, stdout=erlang, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=8}]
+  Redirecting [stderr -> null]
+Starting child: '/bin/echo'
+  child  = (stdin=null(fd:5), stdout=fd:8, stderr=null(fd:5))
+  parent = (stdin=none, stdout=fd:6, stderr=none)
+  Args[0]: /bin/echo
+  Args[1]: ok
+Spawned child pid 11463
+  Parent closing pid 11463 pipe writing end (fd=8)
+  Setup reading end of pid 11463 stdout redirection (fd=6 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11463 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Process 11463 exited (ret=11463, status=0, sig=17, oktojump=0, exited_children=0, exited=T, signaled=F)
+Child process 11463 exited (status=0)
+Read 3 bytes from pid 11463's stdout (fd=6): ok
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Read 0 bytes from pid 11463's stdout (fd=6): No such process
+Eof reading pid 11463's stdout, closing fd=6: No such process
+Process 11463 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'ls' options
+  (stdin=null, stdout=erlang, stderr=erlang)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=8}]
+  Redirecting [stderr -> pipe:{r=9,w=10}]
+Starting child: 'ls'
+  child  = (stdin=null(fd:5), stdout=fd:8, stderr=fd:10)
+  parent = (stdin=none, stdout=fd:6, stderr=fd:9)
+  Executable: 00kuku00
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: ls
+Spawned child pid 11464
+  Parent closing pid 11464 pipe writing end (fd=8)
+  Setup reading end of pid 11464 stdout redirection (fd=6 [non-block])
+  Parent closing pid 11464 pipe writing end (fd=10)
+  Setup reading end of pid 11464 stderr redirection (fd=9 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11464 adding stdout checking (fd=6)
+Pid 11464 adding stdout checking (fd=9)
+Selecting maxfd=9 (sleep={5s,0us})
+Select got 2 events (maxfd=9)
+Read 0 bytes from pid 11464's stdout (fd=6): No child processes
+Eof reading pid 11464's stdout, closing fd=6: No child processes
+Read 64 bytes from pid 11464's stderr (fd=9): ok
+Process 11464 exited (ret=0, status=0, sig=-1, oktojump=0, exited_children=0, exited=T, signaled=F)
+Read 0 bytes from pid 11464's stderr (fd=9): No child processes
+Eof reading pid 11464's stderr, closing fd=9: No child processes
+Process 11464 exited (ret=0, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'echo TEST1' options
+  (stdin=null, stdout=stderr, stderr=erlang)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> stderr]
+  Redirecting [stderr -> pipe:{r=6,w=8}]
+Starting child: 'echo TEST1'
+  child  = (stdin=null(fd:5), stdout=stderr, stderr=fd:8)
+  parent = (stdin=none, stdout=none, stderr=fd:6)
+exec:923: exec_test_...  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo TEST1
+Spawned child pid 11465
+  Parent closing pid 11465 pipe writing end (fd=8)
+  Setup reading end of pid 11465 stderr redirection (fd=6 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11465 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 6 bytes from pid 11465's stderr (fd=6): ok
+Pid 11455 adding stdout checking (fd=7)
+Pid 11465 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 0 bytes from pid 11465's stderr (fd=6): No child processes
+Eof reading pid 11465's stderr, closing fd=6: No child processes
+Process 11465 exited (ret=0, status=0, sig=-1, oktojump=0, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11465 exited (ret=11465, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 1 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'echo TEST2 1>&2' options
+  (stdin=null, stdout=erlang, stderr=stdout)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=8}]
+  Redirecting [stderr -> stdout]
+Starting child: 'echo TEST2 1>&2'
+  child  = (stdin=null(fd:5), stdout=fd:8, stderr=stdout)
+  parent = (stdin=none, stdout=fd:6, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo TEST2 1>&2
+Spawned child pid 11466
+  Parent closing pid 11466 pipe writing end (fd=8)
+  Setup reading end of pid 11466 stdout redirection (fd=6 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11466 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 6 bytes from pid 11466's stdout (fd=6): ok
+Pid 11455 adding stdout checking (fd=7)
+Pid 11466 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 0 bytes from pid 11466's stdout (fd=6): No child processes
+Eof reading pid 11466's stdout, closing fd=6: No child processes
+Process 11466 exited (ret=0, status=0, sig=-1, oktojump=0, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11466 exited (ret=11466, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 1 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+*failed*
+in function exec:'-test_executable/0-fun-0-'/0 (src/exec.erl, line 986)
+in call from exec:test_executable/0 (src/exec.erl, line 983)
+**error:{badmatch,{ok,[{stderr,[<<"Pid 11464: cannot execute '00kuku00': No suc"...>>]}]}}
+
+
+Select got 1 events (maxfd=7)
+Parsed cmd 'echo $XXX' options
+  (stdin=null, stdout=erlang, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> pipe:{r=6,w=8}]
+  Redirecting [stderr -> null]
+Starting child: 'echo $XXX'
+  child  = (stdin=null(fd:5), stdout=fd:8, stderr=null(fd:5))
+  parent = (stdin=none, stdout=fd:6, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: echo $XXX
+Spawned child pid 11467
+  Parent closing pid 11467 pipe writing end (fd=8)
+  Setup reading end of pid 11467 stdout redirection (fd=6 [non-block])
+Pid 11455 adding stdout checking (fd=7)
+Pid 11467 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Read 2 bytes from pid 11467's stdout (fd=6): ok
+Pid 11455 adding stdout checking (fd=7)
+Pid 11467 adding stdout checking (fd=6)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11467 exited (ret=11467, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.000)
+Read 0 bytes from pid 11467's stdout (fd=6): No such process
+Eof reading pid 11467's stdout, closing fd=6: No such process
+Process 11467 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={0s,0us})
+Select got 0 events (maxfd=7)
+Checking 1 running children (exited count=0)
+Checking 0 exited children (wakeup=0.000)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Parsed cmd 'trap '' SIGTERM; sleep 30' options
+  (stdin=null, stdout=null, stderr=null)
+  Redirecting [stdin -> null]
+  Redirecting [stdout -> null]
+  Redirecting [stderr -> null]
+Starting child: 'trap '' SIGTERM; sleep 30'
+  child  = (stdin=null(fd:5), stdout=null(fd:5), stderr=null(fd:5))
+  parent = (stdin=none, stdout=none, stderr=none)
+  Args[0]: /bin/bash
+  Args[1]: -c
+  Args[2]: trap '' SIGTERM; sleep 30
+Spawned child pid 11468
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Select got 1 events (maxfd=7)
+Calling kill(pid=11468, sig=15)
+Sent SIGTERM to pid 11468 (timeout=1s)
+Pid 11455 adding stdout checking (fd=7)
+Selecting maxfd=7 (sleep={5s,0us})
+Process 11455 exited (ret=11455, status=0, sig=17, oktojump=1, exited_children=0, exited=T, signaled=F)
+Checking 2 running children (exited count=1)
+Checking 1 exited children (wakeup=0.992)
+Read 0 bytes from pid 11455's stderr (fd=7): No such process
+Eof reading pid 11455's stderr, closing fd=7: No such process
+Process 11455 exited (ret=-1, status=0, sig=-1, oktojump=0, exited_children=1, exited=T, signaled=F)
+Selecting maxfd=3 (sleep={0s,991959us})
+Select got 0 events (maxfd=3)
+Checking 1 running children (exited count=0)
+Calling kill(pid=11468, sig=9)
+Checking 0 exited children (wakeup=0.000)
+Selecting maxfd=3 (sleep={5s,0us})
+Process 11468 exited (ret=11468, status=9, sig=17, oktojump=1, exited_children=0, exited=F, signaled=T)
+Checking 1 running children (exited count=1)
+Checking 1 exited children (wakeup=5.000)
+Selecting maxfd=3 (sleep={5s,0us})
+Select got 1 events (maxfd=3)
+Setting alarm to 12 seconds
+Calling kill(pid=0, sig=15)
+Got signal: 15 (oktojump=0)
+Exiting (13)
+Got signal: 15 (oktojump=0)
+=======================================================
+  Failed: 1.  Skipped: 0.  Passed: 9.
+ERROR: One or more eunit tests failed.
+ERROR: eunit failed while processing /home/serge/projects/erl-libs/erlexec: rebar_abort
+make: *** [test] Error 1

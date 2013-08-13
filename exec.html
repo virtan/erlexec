@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Module exec</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
@@ -12,7 +12,7 @@
 <h1>Module exec</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>OS shell command runner.
 
-<p><b>Version:</b> 9d14a258be80a7fff49b3970b9874853bda47329</p>
+<p><b>Version:</b> f894713839b5f4c4a094f7990d9c8fc32d1f5191</p>
 <p><b>Behaviours:</b> <a href="gen_server.html"><tt>gen_server</tt></a>.</p>
 <p><b>Authors:</b> Serge Aleynikov (<a href="mailto:saleyn@gmail.com"><tt>saleyn@gmail.com</tt></a>).</p>
 
@@ -44,12 +44,64 @@ processes as other users and adjust process priorities.</p>
   
 <h2><a name="types">Data Types</a></h2>
 
+<h3 class="typedecl"><a name="type-cmd">cmd()</a></h3>
+<p><tt>cmd() = string() | [string()]</tt></p>
+<p><p>  Command to be executed. If specified as a string, the specified command
+  will be executed through the shell. The current shell is obtained
+  from environtment variable <code>SHELL</code>. This can be useful if you
+  are using Erlang primarily for the enhanced control flow it
+  offers over most system shells and still want convenient
+  access to other shell features such as shell pipes, filename
+  wildcards, environment variable expansion, and expansion of
+  <code>~</code> to a user's home directory.  All command arguments must  
+be properly escaped including whitespace and shell  
+metacharacters.</p>
+ 
+  <ul>
+  <b><u>Warning:</u></b> Executing shell commands that
+   incorporate unsanitized input from an untrusted source makes
+   a program vulnerable to
+   <a href="http://en.wikipedia.org/wiki/Shell_injection#Shell_injection" target="_top">shell injection</a>,
+   a serious security flaw which can result in arbitrary command
+   execution. For this reason, the use of <code>shell</code> is strongly
+   discouraged in cases where the command string is constructed
+   from external input:
+  </ul>
+ 
+  <pre>   1&gt; {ok, Filename} = io:read("Enter filename: ").
+   Enter filename: "non_existent; rm -rf / #".
+   {ok, "non_existent; rm -rf / #"}
+   2&gt; exec(Filename, []) % Argh!!! This is not good!</pre>
+ 
+  When command is given in the form of a list of strings,
+  it is passed to <code>execve(3)</code> library call directly without
+  involving the shell process, so the list of strings
+  represents the program to be executed with arguments.
+  In this case all shell-based features are disabled
+  and there's no shell injection vulnerability.</p>
+
 <h3 class="typedecl"><a name="type-cmd_option">cmd_option()</a></h3>
-<p><tt>cmd_option() = monitor | sync | {cd, WorkDir::string()} | {env, [string() | {Name::string(), Value::string()}, ...]} | {kill, KillCmd::string()} | {kill_timeout, Sec::non_neg_integer()} | {group, GID::string() | integer()} | {user, RunAsUser::string()} | {nice, Priority::integer()} | stdin | {stdin, null | close | string()} | stdout | stderr | {stdout, stderr | <a href="#type-output_dev_opt">output_dev_opt()</a>} | {stderr, stdout | <a href="#type-output_dev_opt">output_dev_opt()</a>} | {stdout | stderr, string(), [<a href="#type-output_file_opt">output_file_opt()</a>]}</tt></p>
+<p><tt>cmd_option() = monitor | sync | {executable, string()} | {cd, WorkDir::string()} | {env, [string() | {Name::string(), Value::string()}, ...]} | {kill, KillCmd::string()} | {kill_timeout, Sec::non_neg_integer()} | kill_group | {group, GID::string() | integer()} | {user, RunAsUser::string()} | {nice, Priority::integer()} | {success_exit_code, ExitCode::integer()} | stdin | {stdin, null | close | string()} | stdout | stderr | {stdout, stderr | <a href="#type-output_dev_opt">output_dev_opt()</a>} | {stderr, stdout | <a href="#type-output_dev_opt">output_dev_opt()</a>} | {stdout | stderr, string(), [<a href="#type-output_file_opt">output_file_opt()</a>]} | pty</tt></p>
 <p>  Command options:
   <dl>
   <dt>monitor</dt><dd>Set up a monitor for the spawned process</dd>
   <dt>sync</dt><dd>Block the caller until the OS command exits</dd>
+  <dt>{executable, Executable::string()}</dt>
+      <dd><p>Specifies a replacement program to execute. It is very seldomly
+          needed. When the port program executes a child process using
+          <code>execve(3)</code> call, the call takes the following arguments:
+          <code>(Executable, Args, Env)</code>. When <code>Cmd</code> argument passed to the
+          <code>run/2</code> function is specified as the list of strings,
+          the executable replaces the first paramter in the call, and
+          the original args provided in the <code>Cmd</code> parameter are passed as
+          as the second parameter. Most programs treat the program
+          specified by args as the command name, which can then be different
+          from the program actually executed. On Unix, the args name becomes
+          the display name for the executable in utilities such as <code>ps</code>.</p>
+ 
+          If <code>Cmd</code> argument passed to the <code>run/2</code> function is given as a
+          string, on Unix the <code>Executable</code> specifies a replacement shell
+          for the default <code>/bin/sh</code>.</dd>
   <dt>{cd, WorkDir}</dt><dd>Working directory</dd>
   <dt>{env, Env}</dt>
       <dd>List of "VAR=VALUE" environment variables or
@@ -66,13 +118,19 @@ processes as other users and adjust process priorities.</p>
       <dd>Number of seconds to wait after issueing a SIGTERM or
           executing the custom <code>kill</code> command (if specified) before
           killing the process with the <code>SIGKILL</code> signal</dd>
+  <dt>kill_group</dt>
+      <dd>At process exit kill the whole process group associated with this pid.
+          The process group is obtained by the call to getpgid(3).</dd>
   <dt>{group, GID}</dt>
-      <dd>Sets the effective group ID of the spawned process</dd>
+      <dd>Sets the effective group ID of the spawned process. The value 0
+          means to create a new group ID equal to the OS pid of the process.</dd>
   <dt>{user, RunAsUser}</dt>
       <dd>When exec-port was compiled with capability (Linux) support
           enabled and has a suid bit set, it's capable of running
           commands with a different RunAsUser effective user. Passing
           "root" value of <code>RunAsUser</code> is prohibited.</dd>
+  <dt>{success_exit_code, IntExitCode}</dt>
+      <dd>On success use <code>IntExitCode</code> return value instead of default 0.</dd>
   <dt>{nice, Priority}</dt>
       <dd>Set process priority between -20 and 20. Note that
           negative values can be specified only when <code>exec-port</code>
@@ -93,6 +151,8 @@ processes as other users and adjust process priorities.</p>
       <dd>Redirect process's standard error stream</dd>
   <dt>{stdout | stderr, Filename::string(), [output_dev_opt()]}</dt>
       <dd>Redirect process's stdout/stderr stream to file</dd>
+  <dt>pty</dt>
+      <dd>Use pseudo terminal for the process's stdin, stdout and stderr</dd>
   </dl></p>
 
 <h3 class="typedecl"><a name="type-cmd_options">cmd_options()</a></h3>
@@ -137,6 +197,10 @@ processes as other users and adjust process priorities.</p>
 <p><tt>exec_options() = [<a href="#type-exec_option">exec_option()</a>]</tt></p>
 
 
+<h3 class="typedecl"><a name="type-osgid">osgid()</a></h3>
+<p><tt>osgid() = integer()</tt></p>
+<p>  Representation of OS group ID.</p>
+
 <h3 class="typedecl"><a name="type-ospid">ospid()</a></h3>
 <p><tt>ospid() = integer()</tt></p>
 <p>  Representation of OS process ID.</p>
@@ -166,18 +230,22 @@ processes as other users and adjust process priorities.</p>
   </dl></p>
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#kill-2">kill/2</a></td><td>Send a <code>Signal</code> to a child <code>Pid</code> or <code>OsPid</code>.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#kill-2">kill/2</a></td><td>Send a <code>Signal</code> to a child <code>Pid</code>, <code>OsPid</code> or an Erlang <code>Port</code>.</td></tr>
 <tr><td valign="top"><a href="#manage-2">manage/2</a></td><td>Manage an existing external process.</td></tr>
 <tr><td valign="top"><a href="#ospid-1">ospid/1</a></td><td>Get <code>OsPid</code> of the given Erlang <code>Pid</code>.</td></tr>
 <tr><td valign="top"><a href="#pid-1">pid/1</a></td><td>Get <code>Pid</code> of the given <code>OsPid</code>.</td></tr>
 <tr><td valign="top"><a href="#run-2">run/2</a></td><td>Run an external program.</td></tr>
 <tr><td valign="top"><a href="#run_link-2">run_link/2</a></td><td>Run an external program and link to the OsPid.</td></tr>
 <tr><td valign="top"><a href="#send-2">send/2</a></td><td>Send <code>Data</code> to stdin of the OS process identified by <code>OsPid</code>.</td></tr>
+<tr><td valign="top"><a href="#setpgid-2">setpgid/2</a></td><td>Change group ID of a given <code>OsPid</code> to <code>Gid</code>.</td></tr>
 <tr><td valign="top"><a href="#signal-1">signal/1</a></td><td>Convert a signal number to atom.</td></tr>
-<tr><td valign="top"><a href="#start-1">start/1</a></td><td>Start of an external program manager without supervision.</td></tr>
+<tr><td valign="top"><a href="#start-0">start/0</a></td><td>Start of an external program manager without supervision.</td></tr>
+<tr><td valign="top"><a href="#start-1">start/1</a></td><td></td></tr>
 <tr><td valign="top"><a href="#start_link-1">start_link/1</a></td><td>Supervised start an external program manager.</td></tr>
 <tr><td valign="top"><a href="#status-1">status/1</a></td><td>Decode the program's exit_status.</td></tr>
-<tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Terminate a managed <code>Pid</code> or <code>OsPid</code> process.</td></tr>
+<tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Terminate a managed <code>Pid</code>, <code>OsPid</code>, or <code>Port</code> process.</td></tr>
+<tr><td valign="top"><a href="#stop_and_wait-2">stop_and_wait/2</a></td><td>Terminate a managed <code>Pid</code>, <code>OsPid</code>, or <code>Port</code> process, like
+       <code>stop/1</code>, and wait for it to exit.</td></tr>
 <tr><td valign="top"><a href="#which_children-0">which_children/0</a></td><td>Get a list of children managed by port program.</td></tr>
 </table>
 
@@ -186,13 +254,14 @@ processes as other users and adjust process priorities.</p>
 <h3 class="function"><a name="kill-2">kill/2</a></h3>
 <div class="spec">
 <p><tt>kill(Pid::pid() | <a href="#type-ospid">ospid()</a>, Signal::integer()) -&gt; ok | {error, any()}</tt><br></p>
-</div><p>Send a <code>Signal</code> to a child <code>Pid</code> or <code>OsPid</code>.</p>
+</div><p>Send a <code>Signal</code> to a child <code>Pid</code>, <code>OsPid</code> or an Erlang <code>Port</code>.</p>
 
 <h3 class="function"><a name="manage-2">manage/2</a></h3>
 <div class="spec">
-<p><tt>manage(Pid::<a href="#type-ospid">ospid()</a>, Options::<a href="#type-cmd_options">cmd_options()</a>) -&gt; {ok, pid(), <a href="#type-ospid">ospid()</a>} | {error, any()}</tt><br></p>
+<p><tt>manage(Pid::<a href="#type-ospid">ospid()</a> | port(), Options::<a href="#type-cmd_options">cmd_options()</a>) -&gt; {ok, pid(), <a href="#type-ospid">ospid()</a>} | {error, any()}</tt><br></p>
 </div><p>Manage an existing external process. <code>OsPid</code> is the OS process
-       identifier of the external OS process.</p>
+       identifier of the external OS process or an Erlang <code>Port</code> that
+       would be managed by erlexec.</p>
 
 <h3 class="function"><a name="ospid-1">ospid/1</a></h3>
 <div class="spec">
@@ -208,14 +277,14 @@ processes as other users and adjust process priorities.</p>
 
 <h3 class="function"><a name="run-2">run/2</a></h3>
 <div class="spec">
-<p><tt>run(Exe::string(), Options::<a href="#type-cmd_options">cmd_options()</a>) -&gt; {ok, pid(), <a href="#type-ospid">ospid()</a>} | {ok, Status::integer() | atom()} | {error, any()}</tt><br></p>
+<p><tt>run(Exe::<a href="#type-cmd">cmd()</a>, Options::<a href="#type-cmd_options">cmd_options()</a>) -&gt; {ok, pid(), <a href="#type-ospid">ospid()</a>} | {ok, [{stdout | stderr, [binary()]}]} | {error, any()}</tt><br></p>
 </div><p>Run an external program. <code>OsPid</code> is the OS process identifier of
        the new process. If <code>sync</code> is specified in <code>Options</code> the return
        value is <code>{ok, Status}</code> where <code>Status</code> is OS process exit status.</p>
 
 <h3 class="function"><a name="run_link-2">run_link/2</a></h3>
 <div class="spec">
-<p><tt>run_link(Exe::string(), Options::<a href="#type-cmd_options">cmd_options()</a>) -&gt; {ok, pid(), integer()} | {ok, Status::integer() | atom()} | {error, any()}</tt><br></p>
+<p><tt>run_link(Exe::<a href="#type-cmd">cmd()</a>, Options::<a href="#type-cmd_options">cmd_options()</a>) -&gt; {ok, pid(), <a href="#type-ospid">ospid()</a>} | {ok, [{stdout | stderr, [binary()]}]} | {error, any()}</tt><br></p>
 </div><p>Equivalent to <tt>run / 2</tt>.</p>
 <p>Run an external program and link to the OsPid. If OsPid exits,
        the calling process will be killed or if it's trapping exits,
@@ -227,16 +296,26 @@ processes as other users and adjust process priorities.</p>
 <p><tt>send(OsPid::<a href="#type-ospid">ospid()</a> | pid(), Data::binary()) -&gt; ok</tt><br></p>
 </div><p>Send <code>Data</code> to stdin of the OS process identified by <code>OsPid</code>.</p>
 
+<h3 class="function"><a name="setpgid-2">setpgid/2</a></h3>
+<div class="spec">
+<p><tt>setpgid(OsPid::<a href="#type-ospid">ospid()</a>, Gid::<a href="#type-osgid">osgid()</a>) -&gt; ok | {error, any()}</tt><br></p>
+</div><p>Change group ID of a given <code>OsPid</code> to <code>Gid</code>.</p>
+
 <h3 class="function"><a name="signal-1">signal/1</a></h3>
 <div class="spec">
-<p><tt>signal(XX::integer()) -&gt; atom() | integer()</tt><br></p>
+<p><tt>signal(Num::integer()) -&gt; atom() | integer()</tt><br></p>
 </div><p>Convert a signal number to atom</p>
+
+<h3 class="function"><a name="start-0">start/0</a></h3>
+<div class="spec">
+<p><tt>start() -&gt; {ok, pid()} | {error, any()}</tt><br></p>
+</div><p>Equivalent to <tt>start_link / 1</tt>.</p>
+<p>Start of an external program manager without supervision.</p>
 
 <h3 class="function"><a name="start-1">start/1</a></h3>
 <div class="spec">
 <p><tt>start(Options::<a href="#type-exec_options">exec_options()</a>) -&gt; {ok, pid()} | {error, any()}</tt><br></p>
-</div><p>Equivalent to <tt>start_link / 1</tt>.</p>
-<p>Start of an external program manager without supervision.</p>
+</div>
 
 <h3 class="function"><a name="start_link-1">start_link/1</a></h3>
 <div class="spec">
@@ -253,14 +332,20 @@ processes as other users and adjust process priorities.</p>
 
 <h3 class="function"><a name="stop-1">stop/1</a></h3>
 <div class="spec">
-<p><tt>stop(Pid::pid() | <a href="#type-ospid">ospid()</a>) -&gt; ok | {error, any()}</tt><br></p>
-</div><p>Terminate a managed <code>Pid</code> or <code>OsPid</code> process. The OS process is
+<p><tt>stop(Pid::pid() | <a href="#type-ospid">ospid()</a> | port()) -&gt; ok | {error, any()}</tt><br></p>
+</div><p>Terminate a managed <code>Pid</code>, <code>OsPid</code>, or <code>Port</code> process. The OS process is
        terminated gracefully.  If it was given a <code>{kill, Cmd}</code> option at
        startup, that command is executed and a timer is started.  If
        the program doesn't exit, then the default termination is
        performed.  Default termination implies sending a <code>SIGTERM</code> command
        followed by <code>SIGKILL</code> in 5 seconds, if the program doesn't get
        killed.</p>
+
+<h3 class="function"><a name="stop_and_wait-2">stop_and_wait/2</a></h3>
+<div class="spec">
+<p><tt>stop_and_wait(Port::pid() | <a href="#type-ospid">ospid()</a> | port(), Timeout::integer()) -&gt; term() | {error, any()}</tt><br></p>
+</div><p>Terminate a managed <code>Pid</code>, <code>OsPid</code>, or <code>Port</code> process, like
+       <code>stop/1</code>, and wait for it to exit.</p>
 
 <h3 class="function"><a name="which_children-0">which_children/0</a></h3>
 <div class="spec">
@@ -269,6 +354,6 @@ processes as other users and adjust process priorities.</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Aug 12 2013, 10:13:49.</i></p>
+<p><i>Generated by EDoc, Apr 27 2015, 19:29:24.</i></p>
 </body>
 </html>
